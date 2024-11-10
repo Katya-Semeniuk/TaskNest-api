@@ -38,7 +38,7 @@ class ProfileDetail(APIView):
     def put(self, request, pk):
         profile = self.get_object(pk)
         serializer = ProfileSerializer(profile, data=request.data)
-        if serializer.is_valid:
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_404_BAD_REQUEST)
