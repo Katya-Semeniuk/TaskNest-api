@@ -34,5 +34,15 @@ class TaskListViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         task.refresh_from_db()
         self.assertEqual(task.title, 'updated title')
+
+    def test_owner_can_delete_task(self):
+        self.client.login(username='testuser1', password='pass')
+        testuser1 = User.objects.get(username='testuser1')
+        task = Task.objects.create(owner=testuser1, title='a title')
+        response = self.client.delete(f'/tasks/{task.id}/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Task.objects.filter(id=task.id).exists())
+    
+
     
 
