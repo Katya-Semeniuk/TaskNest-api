@@ -25,3 +25,14 @@ class TaskListViewTests(APITestCase):
     def test_user_not_logged_in_cant_create_task(self):
         response = self.client.post('/tasks/', {'title': 'a title'})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_owner_can_update_task(self):
+        self.client.login(username='testuser1', password='pass')
+        testuser1 = User.objects.get(username='testuser1')
+        task = Task.objects.create(owner=testuser1, title='a title')
+        response = self.client.put(f'/tasks/{task.id}/', {'title': 'updated title'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        task.refresh_from_db()
+        self.assertEqual(task.title, 'updated title')
+    
+
