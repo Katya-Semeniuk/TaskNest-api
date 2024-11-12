@@ -42,7 +42,22 @@ class TaskListViewTests(APITestCase):
         response = self.client.delete(f'/tasks/{task.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Task.objects.filter(id=task.id).exists())
-    
+
+
+class PostDetailViewTests(APITestCase):
+    def setUp(self):
+        testuser1 = User.objects.create_user(username='testuser1', password='pass')
+        testuser2 = User.objects.create_user(username='testuser2', password='pass')
+        Task.objects.create(
+            owner=testuser1, title='a title', description='testuser1 s description'
+        )
+        Task.objects.create(
+            owner=testuser2, title='another title', description='testuser2 s description'
+        )
+    def test_can_retrieve_task_using_valid_id(self):
+        response = self.client.get('/tasks/1/')
+        self.assertEqual(response.data['title'], 'a title')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     
 
