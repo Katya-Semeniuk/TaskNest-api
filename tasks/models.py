@@ -22,6 +22,9 @@ STATUS = [
 
 
 class Task(models.Model):
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='tasks'
+    ) 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     due_date = models.DateField(blank=True, null=True)

@@ -8,10 +8,14 @@ class TaskSerializer(serializers.ModelSerializer):
     assigned_to = serializers.ReadOnlyField(source='assigned_to.username')
     is_overdue = serializers.ReadOnlyField()
 
+    def get_is_owner(self, obj):
+        request = self.context['request']
+        return request.user == obj.owner
+
     class Meta:
         model = Task
         fields = [
-            'id', 'owner','title', 'description', 'due_date', 'created_at', 
+            'id', 'owner','profile_id', 'title', 'description', 'due_date', 'created_at', 
             'updated_at', 'is_overdue', 'priority', 'category', 
             'status', 'assigned_to', 'is_owner',
         ]
