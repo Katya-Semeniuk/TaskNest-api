@@ -59,5 +59,9 @@ class PostDetailViewTests(APITestCase):
         self.assertEqual(response.data['title'], 'a title')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_cant_retrieve_task_using_invalid_id(self):
+        response = self.client.get('/tasks/999/')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     
 
