@@ -63,5 +63,10 @@ class PostDetailViewTests(APITestCase):
         response = self.client.get('/tasks/999/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_user_cant_update_another_users_task(self):
+        self.client.login(username='testuser1', password='pass')
+        response = self.client.put('/tasks/2/', {'title': 'another title'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     
 
