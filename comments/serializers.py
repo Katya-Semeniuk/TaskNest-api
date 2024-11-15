@@ -21,7 +21,6 @@ class CommentSerializer(serializers.ModelSerializer):
             'task', 'created_at', 'updated_at', 'comment'
         ]
 
-
 class CommentDetailSerializer(CommentSerializer):
     """
     Serializer for the Comment model used in Detail view
