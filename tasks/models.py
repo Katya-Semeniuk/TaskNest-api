@@ -46,10 +46,7 @@ class Task(models.Model):
         choices=STATUS,
         default='not started'
         )
-    assigned_to = models.ForeignKey(User, blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='assigned_to')
+    assigned_to = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
 
 
 

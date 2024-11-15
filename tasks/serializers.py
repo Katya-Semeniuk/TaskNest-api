@@ -7,7 +7,10 @@ class TaskSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     is_owner = serializers.SerializerMethodField()
     profile_id = serializers.ReadOnlyField(source='owner.profile.id')
-    assigned_to = serializers.StringRelatedField(allow_null=True)
+    
+    assigned_to = serializers.SlugRelatedField(
+    queryset=User.objects.all(), many=True, slug_field='username', allow_null=True
+    )
     is_overdue = serializers.ReadOnlyField()
 
     def get_is_owner(self, obj):
@@ -19,6 +22,9 @@ class TaskSerializer(serializers.ModelSerializer):
         if request.user != instance.owner:
             raise serializers.ValidationError("Only the owner can assign users")
         return super().update(instance, validated_data)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
     class Meta:
