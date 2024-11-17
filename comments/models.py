@@ -9,7 +9,7 @@ class Comment(models.Model):
     """
     owner = models.ForeignKey(User, related_name="comments", on_delete=models.CASCADE)
     task = models.ForeignKey(Task, related_name="comments", on_delete=models.CASCADE)
-    comment = models.TextField()
+    comment = models.TextField(null=False, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
