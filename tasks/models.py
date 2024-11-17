@@ -54,7 +54,7 @@ class Task(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        f"Task: #{self.title}"
+        return f"Task: #{self.title}"
 
     def mark_overdue(self):
         """Mark task as overdue if due_date is passed."""

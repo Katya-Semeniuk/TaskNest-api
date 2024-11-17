@@ -16,6 +16,8 @@ class Comment(models.Model):
     class Meta:
         ordering = ['created_at']
 
-    def __str__(self): 
-        return str(self.comment) if self.comment else ''
+    # def __str__(self): 
+    #     return str(self.comment) if self.comment else 'No comment'
+    def __str__(self):
+        return str(self.comment) 
         
