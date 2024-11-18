@@ -12,6 +12,7 @@ class TaskSerializer(serializers.ModelSerializer):
     queryset=User.objects.all(), many=True, slug_field='username', allow_null=True
     )
     assigned_users = serializers.SerializerMethodField()
+    comments_count = serializers.ReadOnlyField()
 
     def get_assigned_users(self, obj):
         return [{"id": user.id, "username": user.username} for user in obj.assigned_to.all()]
@@ -37,5 +38,5 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'owner','profile_id', 'is_owner', 'title', 'description', 'due_date', 'created_at', 
             'updated_at', 'is_overdue', 'priority', 'category', 
-            'status','assigned_to','assigned_users'
+            'status','assigned_to','assigned_users', 'comments_count',
         ]

@@ -1,7 +1,9 @@
-from rest_framework import generics, permissions, status
+from django.db.models import Count
+from rest_framework import generics, permissions, status, filters
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Task
 from .serializers import TaskSerializer
@@ -15,8 +17,20 @@ class TaskList(generics.ListCreateAPIView):
     """
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Task.objects.all()
+    queryset = Task.objects.annotate(
+        comments_count = Count('comment', distinct=True),
+    ).order_by('-created_at')
+
     
+    filter_backends = [
+        filters.OrderingFilter,
+        DjangoFilterBackend,
+    ]
+
+    ordering_fields = [
+         'comments_count',
+         ]
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -28,14 +42,18 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
-    queryset = Task.objects.all()
+    queryset = Task.objects.annotate(
+        comments_count = Count('comment', distinct=True),
+    ).order_by('-created_at')
 
 class AssignUserToTaskView(generics.UpdateAPIView):
     """
     Assign a user to a task (POST method).
     """
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
-    queryset = Task.objects.all()
+    queryset = Task.objects.annotate(
+        comments_count = Count('comment', distinct=True),
+    ).order_by('-created_at')
     serializer_class = TaskSerializer
 
     def post(self, request, pk):
@@ -63,7 +81,9 @@ class UnassignUserFromTaskView(generics.UpdateAPIView):
     Unassign a user from a task (DELETE method).
     """
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
-    queryset = Task.objects.all()
+    queryset = Task.objects.annotate(
+        comments_count = Count('comment', distinct=True),
+    ).order_by('-created_at')
     serializer_class = TaskSerializer
 
     def delete(self, request, pk):
