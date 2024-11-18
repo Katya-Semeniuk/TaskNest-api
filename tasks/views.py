@@ -1,13 +1,13 @@
 from django.db.models import Count
-from rest_framework import generics, permissions, status, filters
+from rest_framework import generics, filters, permissions, status
 from django.http import Http404
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-
 from .models import Task
 from .serializers import TaskSerializer
 from drf_api.permissions import IsOwnerOrReadOnly
+
+
 
 
 class TaskList(generics.ListCreateAPIView):
@@ -24,12 +24,35 @@ class TaskList(generics.ListCreateAPIView):
     
     filter_backends = [
         filters.OrderingFilter,
+        filters.SearchFilter,
         DjangoFilterBackend,
     ]
 
     ordering_fields = [
          'comments_count',
          ]
+
+    search_fields = [
+        'owner__username',
+        'title',
+    ]
+
+  
+
+
+    def get_queryset(self):
+        """
+        Обмежує список завдань лише тими, які стосуються залогіненого користувача.
+        """
+        user = self.request.user
+        if user.is_authenticated:
+            return Task.objects.filter(
+                models.Q(owner=user) | models.Q(assigned_to=user)
+            ).annotate(
+                comments_count=Count('comment', distinct=True),
+            ).order_by('-created_at')
+        # Для незалогінених користувачів можна повернути порожній список
+        return Task.objects.none()
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

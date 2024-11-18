@@ -2,26 +2,30 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-PRIORITY_CHOICES = [
+
+
+
+class Task(models.Model):
+
+    PRIORITY_CHOICES = [
         ('HIGH', 'high'),
         ('MEDIUM', 'medium'),
         ('LOW', 'low'),
-]
-CATEGORY_CHOICES = [
+    ]
+    CATEGORY_CHOICES = [
         ('Work', 'work'),
         ('Home', 'home'),
         ('OTHERS', 'others'),
     ]
 
 
-STATUS = [
+    STATUS_CHOICES = [
         ('NOT-STARTED', 'not started'),
         ('IN-PROGRESS', 'in-progress'),
         ('COMPLETE', 'completed'),
-]
+    ]
 
 
-class Task(models.Model):
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='tasks'
     ) 
@@ -43,7 +47,7 @@ class Task(models.Model):
         )
     status = models.CharField(
         max_length=255,
-        choices=STATUS,
+        choices=STATUS_CHOICES,
         default='not started'
         )
     assigned_to = models.ManyToManyField(User, blank=True,)
