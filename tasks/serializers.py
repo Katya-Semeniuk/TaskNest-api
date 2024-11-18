@@ -7,11 +7,16 @@ class TaskSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     is_owner = serializers.SerializerMethodField()
     profile_id = serializers.ReadOnlyField(source='owner.profile.id')
-    
+    is_overdue = serializers.ReadOnlyField()
     assigned_to = serializers.SlugRelatedField(
     queryset=User.objects.all(), many=True, slug_field='username', allow_null=True
     )
-    is_overdue = serializers.ReadOnlyField()
+    assigned_users = serializers.SerializerMethodField()
+
+    def get_assigned_users(self, obj):
+        return [{"id": user.id, "username": user.username} for user in obj.assigned_to.all()]
+
+    
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -30,7 +35,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = [
-            'id', 'owner','profile_id', 'title', 'description', 'due_date', 'created_at', 
+            'id', 'owner','profile_id', 'is_owner', 'title', 'description', 'due_date', 'created_at', 
             'updated_at', 'is_overdue', 'priority', 'category', 
-            'status', 'assigned_to', 'is_owner',
+            'status','assigned_to','assigned_users'
         ]

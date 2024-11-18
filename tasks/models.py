@@ -46,7 +46,7 @@ class Task(models.Model):
         choices=STATUS,
         default='not started'
         )
-    assigned_to = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
+    assigned_to = models.ManyToManyField(User, blank=True,)
 
 
 
