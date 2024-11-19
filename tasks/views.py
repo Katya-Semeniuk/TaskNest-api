@@ -1,13 +1,27 @@
 from django.db.models import Count
-from rest_framework import generics, filters, permissions, status
+from rest_framework import generics, permissions, status
+from rest_framework.filters import SearchFilter, OrderingFilter
 from django.http import Http404
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Task
+from .models import Task, PRIORITY_CHOICES, CATEGORY_CHOICES, STATUS_CHOICES
 from .serializers import TaskSerializer
 from drf_api.permissions import IsOwnerOrReadOnly
+from django_filters import rest_framework as filters
+from django.db import models
 
 
+class TaskFilter(filters.FilterSet):
+    """
+    Набір фільтрів для моделі Task.
+    """
+    priority = filters.ChoiceFilter(choices=PRIORITY_CHOICES)
+    category = filters.ChoiceFilter(choices=CATEGORY_CHOICES)
+    status = filters.ChoiceFilter(choices=STATUS_CHOICES)
+
+    class Meta:
+        model = Task
+        fields = ['priority', 'category', 'status']
 
 
 class TaskList(generics.ListCreateAPIView):
@@ -23,8 +37,8 @@ class TaskList(generics.ListCreateAPIView):
 
     
     filter_backends = [
-        filters.OrderingFilter,
-        filters.SearchFilter,
+        OrderingFilter,
+        SearchFilter,
         DjangoFilterBackend,
     ]
 
@@ -37,8 +51,7 @@ class TaskList(generics.ListCreateAPIView):
         'title',
     ]
 
-  
-
+    filterset_class = TaskFilter
 
     def get_queryset(self):
         """
@@ -57,6 +70,8 @@ class TaskList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+  
+
 
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -68,6 +83,8 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.annotate(
         comments_count = Count('comment', distinct=True),
     ).order_by('-created_at')
+
+
 
 class AssignUserToTaskView(generics.UpdateAPIView):
     """
