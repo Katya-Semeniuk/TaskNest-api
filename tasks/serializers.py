@@ -8,9 +8,8 @@ class TaskSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     profile_id = serializers.ReadOnlyField(source='owner.profile.id')
     is_overdue = serializers.ReadOnlyField()
-    assigned_to = serializers.SlugRelatedField(
-    queryset=User.objects.all(), many=True, slug_field='username', allow_null=True
-    )
+    assigned_to = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=User.objects.all())
     assigned_users = serializers.SerializerMethodField()
     comments_count = serializers.ReadOnlyField()
 
