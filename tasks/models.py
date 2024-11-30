@@ -3,21 +3,21 @@ from django.contrib.auth.models import User
 
 
 PRIORITY_CHOICES = [
-    ('HIGH', 'high'),
-    ('MEDIUM', 'medium'),
-    ('LOW', 'low'),
+    ('high', 'high'),
+    ('medium', 'medium'),
+    ('low', 'low'),
     ]
 CATEGORY_CHOICES = [
-    ('Work', 'work'),
-    ('Home', 'home'),
-    ('OTHERS', 'others'),
+    ('work', 'work'),
+    ('home', 'home'),
+    ('others', 'others'),
     ]
 
 
 STATUS_CHOICES = [
-    ('NOT-STARTED', 'not started'),
-    ('IN-PROGRESS', 'in-progress'),
-    ('COMPLETE', 'completed'),
+    ('not-started', 'not started'),
+    ('in-progress', 'in-progress'),
+    ('complete', 'completed'),
     ]
 
 
@@ -46,7 +46,7 @@ class Task(models.Model):
     status = models.CharField(
         max_length=255,
         choices=STATUS_CHOICES,
-        default='not started'
+        default='not-started'
         )
     assigned_to = models.ManyToManyField(User, blank=True,)
 
