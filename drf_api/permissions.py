@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from tasks.models import Task;
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -17,13 +18,13 @@ class IsAssignedOrOwner(permissions.BasePermission):
         """
         Global permission check for the view.
         """
-        # SAFE_METHODS (GET, HEAD, OPTIONS) - доступ тільки залогіненим користувачам
+        # SAFE_METHODS (GET, HEAD, OPTIONS) - available only to logged in users
         if request.method in permissions.SAFE_METHODS:
             return request.user.is_authenticated
         
-        # POST method - перевіряємо, чи користувач має право коментувати завдання
+        # POST method - we check if the user has the right to comment on the task
         if request.method == 'POST':
-            task_id = request.data.get('task')  # ID завдання має бути в запиті
+            task_id = request.data.get('task')  # ID of the task must be in request
             if not task_id:
                 return False
             
