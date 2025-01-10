@@ -39,6 +39,6 @@ class ProfileDetail(generics.RetrieveUpdateAPIView):
     """
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Profile.objects.annotate(
-        tasks_count = Count('owner__task', distinct=True),
+        tasks_count = Count('owner__tasks', distinct=True),
     ).order_by('-created_at')
     serializer_class = ProfileSerializer
