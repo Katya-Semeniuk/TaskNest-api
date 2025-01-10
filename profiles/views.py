@@ -4,6 +4,7 @@ from .models import Profile
 from .serializers import ProfileSerializer
 from drf_api.permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 
 
 
@@ -21,11 +22,14 @@ class ProfileList(generics.ListAPIView):
     filter_backends = [
         filters.OrderingFilter,
         DjangoFilterBackend,
+        SearchFilter, 
     ]
 
     ordering_fields = [
         'tasks_count',
     ]
+
+    search_fields = ['owner__username'] 
 
 
 
