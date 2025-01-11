@@ -16,7 +16,6 @@ class TaskSerializer(serializers.ModelSerializer):
     def get_assigned_users(self, obj):
         return [{"id": user.id, "username": user.username} for user in obj.assigned_to.all()]
 
-    
 
     def get_is_owner(self, obj):
         request = self.context['request']

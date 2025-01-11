@@ -18,7 +18,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_assigned_to_tasks(self, obj):
         tasks = Task.objects.filter(assigned_to=obj.owner)
-        return TaskSerializer(tasks, many=True).data 
+        return TaskSerializer(tasks, many=True, context=self.context).data
 
     
 
